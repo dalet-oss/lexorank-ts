@@ -77,3 +77,7 @@ MIT
 ---
 **I have not found information about the license of the algorithm LexoRank. 
 If the rights are violated, please contact me to correct the current license.**
+
+
+
+

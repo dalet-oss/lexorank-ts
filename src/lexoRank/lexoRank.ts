@@ -285,6 +285,39 @@ export class LexoRank {
     return new LexoRank(this.bucket, nextDecimal);
   }
 
+  // this is (2^n -1)
+  //const powersOfTwoMinusOne = [ 1, 3, 7, 15, 31, 63, 127, ... ];
+
+  public insertN(other: LexoRank, numbertoInsert: number): LexoRank {
+    // just directly use between if number = 1
+
+    const binaryDepth = 3; // search through powersOfTwoMinusOne to find the first entry which is >= numberToInsert
+    // for example if n = 5, then this would be the third entry (index 2)
+
+    const results: LexoRank[] = [];
+
+    LexoRank.collectRanks(this, other, 0, binaryDepth, results);
+  }
+
+
+  private static collectRanks(left: LexoRank, right: LexoRank, currentDepth: number, maxDepth: number, results: LexoRank[]) {
+    // find the midpoint for this operation
+    const rankAtThisLevel: LexoRank = left.between(right);
+
+    if (currentDepth < maxDepth) {
+      // recurse into the left subtree
+      LexoRank.collectRanks(left, rankAtThisLevel, currentDepth + 1, maxDepth, results);
+    }
+
+    // insert the rank at this level
+    results.push(rankAtThisLevel);
+
+    if (currentDepth < maxDepth) {
+      // recurse into the right subtree
+      LexoRank.collectRanks(rankAtThisLevel, right, currentDepth + 1, maxDepth, results);
+    }
+  }
+
   public between(other: LexoRank): LexoRank {
     if (!this.bucket.equals(other.bucket)) {
       throw new Error('Between works only within the same bucket');
