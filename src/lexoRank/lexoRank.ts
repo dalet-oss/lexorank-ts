@@ -289,14 +289,15 @@ export class LexoRank {
   //const powersOfTwoMinusOne = [ 1, 3, 7, 15, 31, 63, 127, ... ];
 
   public insertN(other: LexoRank, numbertoInsert: number): LexoRank {
-    // just directly use between if number = 1
+    // just directly use between() if number = 1
 
     const binaryDepth = 3; // search through powersOfTwoMinusOne to find the first entry which is >= numberToInsert
     // for example if n = 5, then this would be the third entry (index 2)
 
     const results: LexoRank[] = [];
 
-    LexoRank.collectRanks(this, other, 0, binaryDepth, results);
+    // make sure that this < other, otherwise call with (other, this) as first two params.
+    LexoRank.collectRanks(this, other, 1, binaryDepth, results);
   }
 
 
