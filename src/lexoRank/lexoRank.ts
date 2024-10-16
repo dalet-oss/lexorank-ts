@@ -311,6 +311,69 @@ export class LexoRank {
     return new LexoRank(this.bucket, LexoRank.between(this.decimal, other.decimal));
   }
 
+  public betweenLexoRanks(other: LexoRank, ranksToGenerate: number): LexoRank[] {
+
+    if (!this.bucket.equals(other.bucket)) {
+      throw new Error('Between works only within the same bucket');
+    }
+
+    if (ranksToGenerate == 0) {
+      return [];
+    }
+
+    let newLeft: LexoRank = this;
+    let newRight: LexoRank = other;
+
+    const cmp = this.decimal.compareTo(other.decimal);
+    if (cmp > 0) {
+      newLeft = other;
+      newRight = this;
+    }
+
+    if (cmp === 0) {
+      throw new Error(
+          'Try to rank between issues with same rank this=' +
+          this +
+          ' other=' +
+          other +
+          ' this.decimal=' +
+          this.decimal +
+          ' other.decimal=' +
+          other.decimal
+      );
+    }
+
+    if (ranksToGenerate == 1) {
+      return [new LexoRank(newLeft.bucket, LexoRank.between(newLeft.decimal, newRight.decimal))];
+    }
+
+    const binaryDepth: number = LexoRank.nearestPowerOfTwo(ranksToGenerate);
+
+    const lexoRanks: LexoRank[] = [];
+
+    LexoRank.prepareLexoRanks(newLeft, newRight, 1, binaryDepth, lexoRanks);
+
+    return lexoRanks.slice(0, ranksToGenerate);
+  }
+
+  private static prepareLexoRanks(left: LexoRank, right: LexoRank, currentDepth: number, maxDepth: number, lexoRanks: LexoRank[]) {
+    // find the midpoint for this operation
+    const rankAtThisLevel: LexoRank = left.between(right);
+
+    if (currentDepth < maxDepth) {
+      // recursive into the left subtree
+      LexoRank.prepareLexoRanks(left, rankAtThisLevel, currentDepth + 1, maxDepth, lexoRanks);
+    }
+
+    // insert the LexoRank at this level
+    lexoRanks.push(rankAtThisLevel);
+
+    if (currentDepth < maxDepth) {
+      // recursive into the right subtree
+      LexoRank.prepareLexoRanks(rankAtThisLevel, right, currentDepth + 1, maxDepth, lexoRanks);
+    }
+  }
+
   public getBucket(): LexoRankBucket {
     return this.bucket;
   }
@@ -366,4 +429,17 @@ export class LexoRank {
 
     return this.value.localeCompare(other.value);
   }
+
+  // Visible for unit test
+  public static nearestPowerOfTwo(noOfRanks: number): number {
+    if (noOfRanks < 1) return 0;
+
+    let power = 1;
+    while (Math.pow(2, power) - 1 < noOfRanks) {
+      power++;
+    }
+
+    return power;
+  }
+
 }

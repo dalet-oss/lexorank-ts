@@ -64,4 +64,107 @@ describe('LexoRank', () => {
     const between = prevRank.between(nextRank);
     expect(between.toString()).toEqual(expected);
   });
+
+  it('find the nearest power', () => {
+    expect(LexoRank.nearestPowerOfTwo(1)).toEqual(1);
+    expect(LexoRank.nearestPowerOfTwo(5)).toEqual(3);
+    expect(LexoRank.nearestPowerOfTwo(6)).toEqual(3);
+    expect(LexoRank.nearestPowerOfTwo(8)).toEqual(4);
+    expect(LexoRank.nearestPowerOfTwo(15)).toEqual(4);
+    expect(LexoRank.nearestPowerOfTwo(31)).toEqual(5);
+    expect(LexoRank.nearestPowerOfTwo(63)).toEqual(6);
+    expect(LexoRank.nearestPowerOfTwo(124)).toEqual(7);
+    expect(LexoRank.nearestPowerOfTwo(127)).toEqual(7);
+  });
+
+  it('find the betweenLexoRanks for 1 lexoRanks to generate', () => {
+    const minRank = LexoRank.min();
+    const maxRank = LexoRank.max();
+    const lexoRanks: LexoRank[] = minRank.betweenLexoRanks(maxRank, 1);
+    expect(lexoRanks.length).toEqual(1);
+    expect(lexoRanks[0].toString()).toEqual('0|hzzzzz:');
+  });
+
+  it('find the betweenLexoRanks for 2 lexoRanks to generate', () => {
+    const minRank = LexoRank.min();
+    const maxRank = LexoRank.max();
+    const lexoRanks: LexoRank[] = minRank.betweenLexoRanks(maxRank, 2);
+    expect(lexoRanks.length).toEqual(2);
+    expect(lexoRanks[0].toString()).toEqual('0|8zzzzz:');
+    expect(lexoRanks[1].toString()).toEqual('0|hzzzzz:');
+    expect(checkSortedInAscendingOrder(lexoRanks)).toEqual(true);
+  });
+
+  it('find the betweenLexoRanks for 2 lexoRanks when one lexoRank is long in length', () => {
+    const maxRank = LexoRank.parse('0|i00006:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzr');
+    const minRank = LexoRank.parse('0|i00006:zzr');
+    const lexoRanks: LexoRank[] = minRank.betweenLexoRanks(maxRank, 2);
+    expect(lexoRanks.length).toEqual(2);
+    expect(lexoRanks[0].toString()).toEqual('0|i00006:zzt');
+    expect(lexoRanks[1].toString()).toEqual('0|i00006:zzv');
+    expect(checkSortedInAscendingOrder(lexoRanks)).toEqual(true);
+  });
+
+  it('find the betweenLexoRanks for 3 lexoRanks to generate', () => {
+    const minRank = LexoRank.min();
+    const maxRank = LexoRank.max();
+    const lexoRanks: LexoRank[] = minRank.betweenLexoRanks(maxRank, 3);
+    expect(lexoRanks.length).toEqual(3);
+    expect(lexoRanks[0].toString()).toEqual('0|8zzzzz:');
+    expect(lexoRanks[1].toString()).toEqual('0|hzzzzz:');
+    expect(lexoRanks[2].toString()).toEqual('0|qzzzzz:');
+    expect(checkSortedInAscendingOrder(lexoRanks)).toEqual(true);
+  });
+
+  it('find the betweenLexoRanks for 4 lexoRanks to generate', () => {
+    const minRank = LexoRank.min();
+    const maxRank = LexoRank.max();
+    const lexoRanks: LexoRank[] = minRank.betweenLexoRanks(maxRank, 4);
+    expect(lexoRanks.length).toEqual(4);
+    expect(lexoRanks[0].toString()).toEqual('0|4hzzzz:');
+    expect(lexoRanks[1].toString()).toEqual('0|8zzzzz:');
+    expect(lexoRanks[2].toString()).toEqual('0|dhzzzz:');
+    expect(lexoRanks[3].toString()).toEqual('0|hzzzzz:');
+    expect(checkSortedInAscendingOrder(lexoRanks)).toEqual(true);
+  });
+
+  it('find the betweenLexoRanks for 7 lexoRanks to generate', () => {
+    const minRank = LexoRank.min();
+    const maxRank = LexoRank.max();
+    const lexoRanks: LexoRank[] = minRank.betweenLexoRanks(maxRank, 7);
+    expect(lexoRanks.length).toEqual(7);
+    expect(lexoRanks[0].toString()).toEqual('0|4hzzzz:');
+    expect(lexoRanks[1].toString()).toEqual('0|8zzzzz:');
+    expect(lexoRanks[2].toString()).toEqual('0|dhzzzz:');
+    expect(lexoRanks[3].toString()).toEqual('0|hzzzzz:');
+    expect(lexoRanks[4].toString()).toEqual('0|mhzzzz:');
+    expect(lexoRanks[5].toString()).toEqual('0|qzzzzz:');
+    expect(lexoRanks[6].toString()).toEqual('0|vhzzzz:');
+    expect(checkSortedInAscendingOrder(lexoRanks)).toEqual(true);
+  });
+
+  it('find the betweenLexoRanks for 8 lexoRanks when one lexoRank is long in length', () => {
+    const maxRank = LexoRank.parse('0|i00006:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzr');
+    const minRank = LexoRank.parse('0|i00006:zzr');
+    const lexoRanks: LexoRank[] = minRank.betweenLexoRanks(maxRank, 8);
+    expect(lexoRanks.length).toEqual(8);
+    expect(lexoRanks[0].toString()).toEqual('0|i00006:zzri');
+    expect(lexoRanks[1].toString()).toEqual('0|i00006:zzs');
+    expect(lexoRanks[2].toString()).toEqual('0|i00006:zzsi');
+    expect(lexoRanks[3].toString()).toEqual('0|i00006:zzt');
+    expect(lexoRanks[4].toString()).toEqual('0|i00006:zzti');
+    expect(lexoRanks[5].toString()).toEqual('0|i00006:zzu');
+    expect(lexoRanks[6].toString()).toEqual('0|i00006:zzui');
+    expect(lexoRanks[7].toString()).toEqual('0|i00006:zzv');
+    expect(checkSortedInAscendingOrder(lexoRanks)).toEqual(true);
+  });
+
+  function checkSortedInAscendingOrder(arr) {
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i] > arr[i + 1]) {
+        return false;
+      }
+    }
+    return true;
+  }
 });
