@@ -311,23 +311,27 @@ export class LexoRank {
     return new LexoRank(this.bucket, LexoRank.between(this.decimal, other.decimal));
   }
 
-  public betweenLexoRanks(other: LexoRank, ranksToGenerate: number): LexoRank[] {
+  public multipleBetween(other: LexoRank, ranksToGenerate: number): LexoRank[] {
 
     if (!this.bucket.equals(other.bucket)) {
       throw new Error('Between works only within the same bucket');
     }
 
-    if (ranksToGenerate == 0) {
-      return [];
+    if (ranksToGenerate <= 0) {
+      throw new Error(`'ranksToGenerate' should be greater than 0`);
     }
 
-    let newLeft: LexoRank = this;
-    let newRight: LexoRank = other;
+    if (ranksToGenerate == 1) {
+      return [this.between(other)];
+    }
+
+    let left: LexoRank = this;
+    let right: LexoRank = other;
 
     const cmp = this.decimal.compareTo(other.decimal);
     if (cmp > 0) {
-      newLeft = other;
-      newRight = this;
+      left = other;
+      right = this;
     }
 
     if (cmp === 0) {
@@ -343,15 +347,11 @@ export class LexoRank {
       );
     }
 
-    if (ranksToGenerate == 1) {
-      return [new LexoRank(newLeft.bucket, LexoRank.between(newLeft.decimal, newRight.decimal))];
-    }
-
-    const binaryDepth: number = LexoRank.nearestPowerOfTwo(ranksToGenerate);
+    const binaryDepth: number = LexoRank.binaryDepthToInsertRanks(ranksToGenerate);
 
     const lexoRanks: LexoRank[] = [];
 
-    LexoRank.prepareLexoRanks(newLeft, newRight, 1, binaryDepth, lexoRanks);
+    LexoRank.prepareLexoRanks(left, right, 1, binaryDepth, lexoRanks);
 
     return lexoRanks.slice(0, ranksToGenerate);
   }
@@ -431,7 +431,7 @@ export class LexoRank {
   }
 
   // Visible for unit test
-  public static nearestPowerOfTwo(noOfRanks: number): number {
+  public static binaryDepthToInsertRanks(noOfRanks: number): number {
     if (noOfRanks < 1) return 0;
 
     let power = 1;
