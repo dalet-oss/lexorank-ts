@@ -1,4 +1,4 @@
-name: 'CI Publish to Maven Central'
+name: 'CI Publish to NPM Registry'
 
 on:
   workflow_dispatch:
