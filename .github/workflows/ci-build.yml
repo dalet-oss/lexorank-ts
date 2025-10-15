@@ -24,7 +24,7 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
           scope: '@dalet-oss'

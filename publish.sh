@@ -28,9 +28,7 @@ else
   echo 'Setting the version into package.json'
   yarn version --no-git-tag-version --new-version ${VERSION}
 
-  echo 'Adding NPM registry access token for https://registry.npmjs.org into local .npmrc'
-  echo "//registry.npmjs.org/:_authToken=${NPM_REGISTRY_ACCESS_TOKEN}" >> .npmrc
-
+  # Auth is provided by GitHub OIDC trusted publishing to NPM, per https://docs.npmjs.com/trusted-publishers
   echo 'Publishing to NPM Central'
   npm publish --access public
 fi

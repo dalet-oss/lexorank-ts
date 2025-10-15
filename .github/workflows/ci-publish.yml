@@ -6,6 +6,10 @@ on:
     tags:
       - 'release/*'
 
+permissions:
+  id-token: write  # Allows OIDC to be used for trusted publishing to NPM, per https://docs.npmjs.com/trusted-publishers
+  contents: read
+
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: false
@@ -13,6 +17,7 @@ concurrency:
 jobs:
   compile-test-and-publish-to-npm:
     runs-on: ubuntu-latest
+    environment: ci-publish
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,10 +25,13 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
           scope: '@dalet-oss'
+
+      - name: Update npm (11.5.1 or later is required for Github OIDC trusted publishing)
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: yarn install
@@ -36,5 +44,3 @@ jobs:
 
       - name: Publish to public NPM registry
         run: ./publish.sh
-        env:
-          NPM_REGISTRY_ACCESS_TOKEN: ${{ secrets.NPM_REGISTRY_ACCESS_TOKEN }}
