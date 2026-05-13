@@ -1,7 +1,7 @@
 import { LexoInteger } from './lexoInteger';
 import { LexoRank } from './lexoRank';
 
-class LexoRankBucket {
+export class LexoRankBucket {
   public static get BUCKET_0(): LexoRankBucket {
     if (!this._BUCKET_0) {
       this._BUCKET_0 = new LexoRankBucket('0');
