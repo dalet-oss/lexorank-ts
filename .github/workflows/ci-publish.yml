@@ -25,15 +25,10 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
           scope: '@dalet-oss'
-
-      - name: Update npm (11.5.1 or later is required for Github OIDC trusted publishing)
-        run: |
-          npm install -g promise-retry
-          npm install -g npm@latest
 
       - name: Install dependencies
         run: yarn install
